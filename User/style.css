@@ -1,0 +1,14 @@
+window {
+    background-color: #300A24;
+    /* You can add more style properties here */
+}
+
+button {
+        font-size: 17px;    
+        color: #FFFFFF;      
+        background-color: #300A24;
+} 
+
+button:hover{
+    background-color: #ffffff79;
+}

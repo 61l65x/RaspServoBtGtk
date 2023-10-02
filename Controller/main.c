@@ -10,17 +10,19 @@
 #include <time.h>
 #include <pthread.h>
 
-#define SENSOR_1_INPUT 22
-#define SENSOR_2_INPUT 23
-#define SWITCH_INPUT   24
 #define SERVO_PIN 1 //GPIO 18, Board 12, Wiringpi 1
 
 int handleCommands(void);
 int client_socket;
 int server_socket;
+
+
+/****************** JOYSTICK START ************/
+#define SENSOR_1_INPUT 22
+#define SENSOR_2_INPUT 23
+#define SWITCH_INPUT   24
 int joystickRunning = 1;
 int currPwm = 0;
-
 void *joystickThread(void *arg) {
     
     softPwmCreate(SERVO_PIN  , 0, 200);
@@ -38,8 +40,7 @@ void *joystickThread(void *arg) {
         
         printf("curr %d\n", currPwm);
 
-         if (!X_VALUE) {
-            // Move the servo left by decreasing the PWM value
+         if (!X_VALUE) {//LEFT
             currPwm -= 1;
             if (currPwm < 1) {
                 currPwm = 1;
@@ -47,22 +48,13 @@ void *joystickThread(void *arg) {
             softPwmWrite(SERVO_PIN, currPwm);
         }
 
-         if (!Y_VALUE) {
-            // Move the servo right by increasing the PWM value
+         if (!Y_VALUE) {//RIGHT
             currPwm += 1;
             if (currPwm > 23) {
                 currPwm = 23;
             }
             softPwmWrite(SERVO_PIN, currPwm);
         }
-        
-
-        // Define conditions:
-        // ...
-        // ...
-        // ...
-
-        // Sleep for 1 second.
         delay(1000);
     }
     softPwmStop(SERVO_PIN);
@@ -79,7 +71,7 @@ int joyStick(void) {
     pinMode(SENSOR_2_INPUT, INPUT);
     pinMode(SWITCH_INPUT, INPUT);
 
-    // THREAD FOR JOYSTICK
+    // THREAD FOR JOYSTICK CONTROLS
     pthread_t joystickThreadHandle;
     pthread_create(&joystickThreadHandle, NULL, joystickThread, NULL);
 
@@ -88,6 +80,8 @@ int joyStick(void) {
 	
     return 0;
 }
+/******************  JOYSTICK END ***********/
+
 
 int servoMove(char *s){
 
@@ -117,13 +111,23 @@ int servoMove(char *s){
         sleep(2);
     }
     else if (!strcmp(s, "left")){
-        softPwmWrite(SERVO_PIN, --currPwm);
+
+            if (currPwm >= pwm_min) {
+                currPwm--;
+                softPwmWrite(SERVO_PIN, currPwm);
+                delay(10);
+            } 
+            else{printf("Minimum\n");}
     }
     else if (!strcmp(s, "right")){
-        softPwmWrite(SERVO_PIN, ++currPwm);
+     
+        if (currPwm <= pwm_max) {
+            currPwm++;
+            softPwmWrite(SERVO_PIN, currPwm);
+            delay(10);
+        } 
+        else {printf("Maximum\n");}
     }
-    // STOP SERVO
-
     softPwmStop(SERVO_PIN);
     return 0;
 }
@@ -139,7 +143,7 @@ int handleCommands(void){
     }
     buffer[bytes_received] = '\0';
 
-    //CHECK MSG
+    //CHECK COMMAND
     if(strcmp(buffer, "open") == 0){
         if (servoMove("open")){send(client_socket, strerror(errno), strlen(strerror(errno)), 0); return -1;}  
 		send(client_socket, successmsg, strlen(successmsg), 0);
@@ -152,6 +156,15 @@ int handleCommands(void){
 		if (servoMove("half")){send(client_socket, strerror(errno), strlen(strerror(errno)), 0); return -1;}    
 		send(client_socket, successmsg, strlen(successmsg), 0);
 	}
+    else if (strcmp(buffer, "spinleft") == 0){    
+        if (servoMove("left")){send(client_socket, strerror(errno), strlen(strerror(errno)), 0); return -1;}    
+        send(client_socket, successmsg, strlen(successmsg), 0);
+    }
+    else if (strcmp(buffer, "spinright") == 0){    
+        if (servoMove("right")){send(client_socket, strerror(errno), strlen(strerror(errno)), 0); return -1;}    
+		printf("JEEEEEEEEEEEEEEE\n");
+        send(client_socket, successmsg, strlen(successmsg), 0);
+    }
     else if (strcmp(buffer, "joystick") == 0){
         if (joyStick()){send(client_socket, strerror(errno), strlen(strerror(errno)), 0); return -1;}    
         send(client_socket, successmsg, strlen(successmsg), 0);
@@ -184,6 +197,7 @@ int main(void) {
     struct sockaddr_rc client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
     client_socket = accept(server_socket, (struct sockaddr *)&client_addr, &client_addr_len);
+    if (client_socket != -1){printf("Connected !\n");}
 
     // COMMUNICATE
     while (1) {

@@ -12,13 +12,26 @@ void sendCommand(const char *command) {
     if (send(client_socket, command, strlen(command), 0) == -1) {
         perror("Failed to send command");
     }
+    /*if (!strcmp(command, "joystick")){
+
+        char buffer[1024];
+        memset(buffer, 0, sizeof(buffer));
+    
+        ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
+        if (bytes_received == -1) {perror("Failed to receive data");return;}
+        
+        // Process and use the received data (e.g., display it)
+        printf("Received data: %s\n", buffer);
+    }*/
 }
 
 // Callback functions for button click events
 static void sendOpenCommand(GtkWidget *widget, gpointer user_data) {sendCommand("open");}
 static void sendHalfCommand(GtkWidget *widget, gpointer user_data) {sendCommand("half");}
 static void sendCloseCommand(GtkWidget *widget, gpointer user_data) {sendCommand("close");}
+static void joyStickCommand(GtkWidget *widget, gpointer user_data) {sendCommand("joystick");}
 static void ExitCommand(GtkWidget *widget, gpointer user_data) {exit(EXIT_SUCCESS);}
+
 
 static void activate(GtkApplication *app, gpointer user_data)
 {
@@ -41,24 +54,29 @@ static void activate(GtkApplication *app, gpointer user_data)
                                                GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     
     //************ BUTTONS *****************************************
-    GtkWidget *open = gtk_button_new_with_label("open");
-    GtkWidget *half = gtk_button_new_with_label("half");
-    GtkWidget *close = gtk_button_new_with_label("close");
-    GtkWidget *exit = gtk_button_new_with_label("exit");
+    GtkWidget *open =      gtk_button_new_with_label("open");
+    GtkWidget *half =      gtk_button_new_with_label("half");
+    GtkWidget *close =     gtk_button_new_with_label("close");
+    GtkWidget *joystick =  gtk_button_new_with_label("joystick");
+    GtkWidget *exit =      gtk_button_new_with_label("exit");
     //size
-    gtk_widget_set_size_request(open, 200, 50); 
-    gtk_widget_set_size_request(half, 200, 50); 
-    gtk_widget_set_size_request(close, 200, 50);  
-    gtk_widget_set_size_request(exit, 200, 50); 
+    gtk_widget_set_size_request( open,      200, 50); 
+    gtk_widget_set_size_request( half,      200, 50); 
+    gtk_widget_set_size_request( close,     200, 50);
+    gtk_widget_set_size_request( joystick,  200, 50); 
+    gtk_widget_set_size_request( exit,      200, 50); 
     //attach
-    gtk_grid_attach(GTK_GRID(grid), open,  1, 1, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), half,  1, 2, 1, 1); 
-    gtk_grid_attach(GTK_GRID(grid), close, 1, 3, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), exit,  1, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid),  open,       1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid),  half,       1, 2, 1, 1); 
+    gtk_grid_attach(GTK_GRID(grid),  close,      1, 3, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid),  joystick,   1, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid),  exit,       1, 5, 1, 1);
+
     //functions
     g_signal_connect(open, "clicked", G_CALLBACK(sendOpenCommand), NULL);
     g_signal_connect(half, "clicked", G_CALLBACK(sendHalfCommand), NULL);
     g_signal_connect(close, "clicked", G_CALLBACK(sendCloseCommand), NULL);
+    g_signal_connect(joystick, "clicked", G_CALLBACK(joyStickCommand), NULL);
     g_signal_connect(exit, "clicked", G_CALLBACK(ExitCommand), NULL);
     /*****************************************************************/
 
@@ -78,7 +96,6 @@ int main(int argc, char **argv) {
     str2ba("B8:27:EB:BB:5A:DA", &server_addr.rc_bdaddr);
     server_addr.rc_channel = 4;
     connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
-
 
     //GTK APP
 	gtk_init();

@@ -1,6 +1,6 @@
 [
  {
-  "directory": "/home/alex/C_Coding/SocketProgramming/Bluetooth/BtServoControl/User",
+  "directory": "/home/alex/BtServoGtk/User",
   "arguments": [
    "gcc",
    "main.c",

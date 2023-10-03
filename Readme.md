@@ -6,6 +6,13 @@
 + Gtk gui in user side
 + User can control the servo with certain commands
 
++ You can spin the servo with hard and software pwm signals.
+
+
+
+
+
+
 #Joystick functionality -- Just for fun not necessary...
 + Using arduino to take analog signals and  sends them to rasp 
 in digital mode.

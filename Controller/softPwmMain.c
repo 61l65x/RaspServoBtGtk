@@ -5,8 +5,11 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 #include <softPwm.h>
+#include <errno.h>
+#include <string.h>
 
 #define SERVO_PIN 1 //GPIO 18, Board 12, Wiringpi 1
+int currPwm = 1;
 
 int servoMove(char *s){
 
@@ -29,7 +32,20 @@ int servoMove(char *s){
     else if (!strcmp(s, "close")){
         softPwmWrite(SERVO_PIN, pwm_max);
     }
-
+    else if (strcmp(s, "left") == 0){
+        if (currPwm > pwm_min){
+            currPwm--;
+            pwmWrite(SERVO_PIN,currPwm);
+            delay(100);
+        }
+    }
+    else if (strcmp(s, "right") == 0){
+        if (currPwm > pwm_min){
+            currPwm++;
+            pwmWrite(SERVO_PIN, currPwm);
+            delay(100);
+        }
+    }
     // STOP SERVO
 	sleep(2);
     softPwmStop(SERVO_PIN);
@@ -61,6 +77,16 @@ int handleCommands(int client_socket){
 		servoMove("half");
 		send(client_socket, successmsg, strlen(successmsg), 0);
 	}
+    else if (strcmp(buffer, "spinleft") == 0){    
+        if (servoMove("left")){send(client_socket, strerror(errno), strlen(strerror(errno)), 0); return -1;}    
+        printf("Spinning left\n");
+        send(client_socket, successmsg, strlen(successmsg), 0);
+    }
+    else if (strcmp(buffer, "spinright") == 0){    
+        if (servoMove("right")){send(client_socket, strerror(errno), strlen(strerror(errno)), 0); return -1;}    
+		printf("Spinning right\n");
+        send(client_socket, successmsg, strlen(successmsg), 0);
+    }
 	else send(client_socket, errmsg, strlen(errmsg), 0);
 
     return 0;

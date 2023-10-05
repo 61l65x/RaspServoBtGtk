@@ -1,0 +1,181 @@
+    /* BUTTOS
+    GtkWidget *arrowLeftButton =  gtk_button_new_with_label("Spin Left");
+    GtkWidget *arrowRightButton = gtk_button_new_with_label("Spin Right");
+    //funcs
+    g_signal_connect(arrowLeftButton,  "clicked", G_CALLBACK(arrowLeftPressed),  NULL);
+    g_signal_connect(arrowRightButton, "clicked", G_CALLBACK(arrowRightPressed), NULL);
+    //attach
+    gtk_grid_attach(GTK_GRID(grid), arrowLeftButton,  1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), arrowRightButton, 2, 1, 1, 1);*/
+
+# Functions for joystick
+gtk_grid_attach(GTK_GRID(grid),  joystick,   1, 5, 1, 1);
+GtkWidget *joystick =  gtk_button_new_with_label("Joystick /ERR/");
+ gtk_widget_set_size_request( joystick,  120,  50); 
+    g_signal_connect(joystick, "clicked", G_CALLBACK(joyStickCommand), NULL);
+	/****************** JOYSTICK START ************/
+#define SENSOR_1_INPUT 22
+#define SENSOR_2_INPUT 23
+#define SWITCH_INPUT   24
+int joystickRunning = 1;
+int currPwm = 0;
+void *joystickThread(void *arg) {
+
+    softPwmCreate(SERVO_PIN  , 0, 200);
+    while (joystickRunning) {
+        // Get signals from Arduino as digital input values.
+        int X_VALUE = digitalRead(SENSOR_1_INPUT);
+        int Y_VALUE = digitalRead(SENSOR_2_INPUT);
+        int SWITCH_VALUE = digitalRead(SWITCH_INPUT);
+        // Print values.
+        printf("SENSOR_1_VALUE: %d\n", X_VALUE);
+        printf("SENSOR_2_VALUE: %d\n", Y_VALUE);
+        printf("SWITCH_VALUE: %d\n", SWITCH_VALUE);
+
+        if (!SWITCH_VALUE)break;
+
+        printf("curr %d\n", currPwm);
+
+         if (!X_VALUE) {//LEFT
+            currPwm -= 1;
+            if (currPwm < 1) {
+                currPwm = 1;
+            }
+            softPwmWrite(SERVO_PIN, currPwm);
+        }
+
+         if (!Y_VALUE) {//RIGHT
+            currPwm += 1;
+            if (currPwm > 23) {
+                currPwm = 23;
+            }
+            softPwmWrite(SERVO_PIN, currPwm);
+        }
+        delay(1000);
+    }
+    softPwmStop(SERVO_PIN);
+
+    return NULL;
+}
+
+int joyStick(void) {
+
+    wiringPiSetupGpio();
+
+    // SET UP PINS
+    pinMode(SENSOR_1_INPUT, INPUT);
+    pinMode(SENSOR_2_INPUT, INPUT);
+    pinMode(SWITCH_INPUT, INPUT);
+
+    // THREAD FOR JOYSTICK CONTROLS
+    pthread_t joystickThreadHandle;
+    pthread_create(&joystickThreadHandle, NULL, joystickThread, NULL);
+
+    // WAIT JOYSTICK TO FINISH
+    pthread_join(joystickThreadHandle, NULL);
+
+    return 0;
+}
+/******************  JOYSTICK END ***********/
+  /*CHECK MSG
+    if(strcmp(buffer, "open") == 0){
+        servoMove("open");
+		send(client_socket, successmsg, strlen(successmsg), 0);
+    }
+    else if (strcmp(buffer, "close") == 0){
+        servoMove("close");
+		send(client_socket, successmsg, strlen(successmsg), 0);
+    }
+	else if (strcmp(buffer, "half") == 0){
+		servoMove("half");
+		send(client_socket, successmsg, strlen(successmsg), 0);
+	}*/
+	
+	/*static void sliderValueChanged(GtkRange *range, gpointer user_data) {
+    double value = gtk_range_get_value(range);
+    char command[32];
+    snprintf(command, sizeof(command), "MOVE:%.1f", value);
+    sendCommand(command);
+}
+
+
+
+static void sliderWindow() {
+
+    // MANUALWINDOW
+    GtkWidget *manualWindow = gtk_window_new();
+    gtk_window_set_title(GTK_WINDOW(manualWindow), "Slide Control");
+    gtk_window_set_default_size(GTK_WINDOW(manualWindow), 400, 200);
+
+  
+    GtkWidget *grid = gtk_grid_new();
+    gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(grid, GTK_ALIGN_CENTER);
+
+    //label
+    const gchar *markup_text = "<span foreground='white'> <b>| Adjust the slide to move servo |</b>.</span>";
+    GtkWidget *label = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(label), markup_text);
+    //slider 
+    GtkWidget *slider = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0.0, 23.0, 1.0);
+    gtk_range_set_value(GTK_RANGE(slider), 0.0);
+    gtk_widget_set_size_request(slider, 300, -1);
+    //attach
+    gtk_grid_attach(GTK_GRID(grid), label, 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), slider, 1, 5, 1, 1);
+   
+
+    //functionality
+    g_signal_connect(slider, "value-changed", G_CALLBACK(sliderValueChanged), NULL);
+    
+    gtk_window_set_child(GTK_WINDOW(manualWindow), grid);
+    gtk_widget_show(manualWindow);
+}*/
+
+
+
+/*SAVE USER CALLBACKS
+static void saveButtonClicked(GtkButton *button, gpointer user_data) {
+    GtkEntryBuffer *nameEntry = GTK_ENTRY_BUFFER(user_data);
+    const gchar *name = gtk_entry_buffer_get_text(nameEntry);
+    
+    // Now you have the user's name in the 'name' variable
+    printf("User's Name: %s\n", name);
+
+    // You can send the name to your sendCommand function if needed
+    char command[128];
+    snprintf(command, sizeof(command), "SAVE:%s", name);
+    saveUser(command);
+}
+*/
+/* AVE
+static void saveWindow() {
+
+    // SAVEWINDOW
+    GtkWidget *saveWindow = gtk_window_new();
+    gtk_window_set_title(GTK_WINDOW(saveWindow), "Save user");
+    gtk_window_set_default_size(GTK_WINDOW(saveWindow), 400, 200);
+
+    //GRID 
+    GtkWidget *grid = gtk_grid_new();
+    gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(grid, GTK_ALIGN_CENTER);
+
+    //entry
+    GtkEntryBuffer *nameBuffer = gtk_entry_buffer_new(NULL, -1);
+    GtkWidget *nameEntry = gtk_entry_new_with_buffer(GTK_ENTRY_BUFFER(nameBuffer));
+    gtk_entry_set_placeholder_text(GTK_ENTRY(nameEntry), "Enter your name");
+
+    //BUTTON
+    GtkWidget *saveButton = gtk_button_new_with_label("Save");
+
+    // attach
+    gtk_grid_attach(GTK_GRID(grid), nameEntry,   1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), saveButton,  1, 2, 1, 1);
+
+    // SAVE CALLBACK
+    g_signal_connect(saveButton, "clicked", G_CALLBACK(saveButtonClicked), nameBuffer);
+    gtk_window_set_child(GTK_WINDOW(saveWindow), grid);
+    gtk_widget_show(saveWindow);
+}
+*/

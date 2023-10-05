@@ -12,3 +12,7 @@ button {
 button:hover{
     background-color: #ffffff79;
 }
+
+entry {
+    color: #ffffff; /* You can use any valid color value here */
+}

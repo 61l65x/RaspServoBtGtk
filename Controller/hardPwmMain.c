@@ -16,71 +16,8 @@
 int handleCommands(void);
 int client_socket;
 int server_socket;
-
-
-/****************** JOYSTICK START ************/
-#define SENSOR_1_INPUT 22
-#define SENSOR_2_INPUT 23
-#define SWITCH_INPUT   24
-int joystickRunning = 1;
 int currPwm = 0;
-void *joystickThread(void *arg) {
     
-    softPwmCreate(SERVO_PIN  , 0, 200);
-    while (joystickRunning) {
-        // Get signals from Arduino as digital input values.
-        int X_VALUE = digitalRead(SENSOR_1_INPUT);
-        int Y_VALUE = digitalRead(SENSOR_2_INPUT);
-        int SWITCH_VALUE = digitalRead(SWITCH_INPUT);
-        // Print values.
-        printf("SENSOR_1_VALUE: %d\n", X_VALUE);
-        printf("SENSOR_2_VALUE: %d\n", Y_VALUE);
-        printf("SWITCH_VALUE: %d\n", SWITCH_VALUE);
-
-        if (!SWITCH_VALUE)break;
-        
-        printf("curr %d\n", currPwm);
-
-         if (!X_VALUE) {//LEFT
-            currPwm -= 1;
-            if (currPwm < 1) {
-                currPwm = 1;
-            }
-            softPwmWrite(SERVO_PIN, currPwm);
-        }
-
-         if (!Y_VALUE) {//RIGHT
-            currPwm += 1;
-            if (currPwm > 23) {
-                currPwm = 23;
-            }
-            softPwmWrite(SERVO_PIN, currPwm);
-        }
-        delay(1000);
-    }
-    softPwmStop(SERVO_PIN);
-
-    return NULL;
-}
-
-int joyStick(void) {
-    
-    wiringPiSetupGpio();
-
-    // SET UP PINS
-    pinMode(SENSOR_1_INPUT, INPUT);
-    pinMode(SENSOR_2_INPUT, INPUT);
-    pinMode(SWITCH_INPUT, INPUT);
-
-    // THREAD FOR JOYSTICK CONTROLS
-    pthread_t joystickThreadHandle;
-    pthread_create(&joystickThreadHandle, NULL, joystickThread, NULL);
-
-    // WAIT JOYSTICK TO FINISH
-    pthread_join(joystickThreadHandle, NULL);
-	
-    return 0;
-}
 /******************  JOYSTICK END ***********/
 
 
@@ -212,7 +149,6 @@ int main(void) {
     close(client_socket);
     close(server_socket);
 
-    joystickRunning = 0;
     return 0;
 }
 

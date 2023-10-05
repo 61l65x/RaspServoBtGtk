@@ -8,8 +8,41 @@
 #include <errno.h>
 #include <string.h>
 
+
+
 #define SERVO_PIN 1 //GPIO 18, Board 12, Wiringpi 1
+#define PWM_MIN 1
+#define PWM_MAX 23
+#define PWM_RANGE 200
 int currPwm = 1;
+
+void saveUserSettings(char *name){
+    
+}
+
+
+void moveServoSmoothly(int targetPosition) {
+    if (wiringPiSetup() == -1) {
+        fprintf(stderr, "Failed to initialize WiringPi\n");
+        return;
+    }
+
+    softPwmCreate(SERVO_PIN, 0, PWM_RANGE); // Initialize servo PWM pin
+
+    int currentPosition = PWM_MIN; // Start from the minimum position
+    int step = (targetPosition - currentPosition > 0) ? 1 : -1; // Determine the direction of movement
+
+    while (currentPosition != targetPosition) {
+        softPwmWrite(SERVO_PIN, currentPosition);
+
+        currentPosition += step;
+
+        usleep(100); 
+    }
+
+    sleep(1);
+    softPwmStop(SERVO_PIN);
+}
 
 int servoMove(char *s){
 
@@ -17,77 +50,54 @@ int servoMove(char *s){
         fprintf(stderr, "Failed to initialize WiringPi\n");
         return -1;
     }
-    softPwmCreate(SERVO_PIN  , 0, 200);  // Initialize servo PWM pin
+    softPwmCreate(SERVO_PIN  , 0, 100);  // Initialize servo PWM pin
 	
 	//MG-995 max 25
-    int pwm_min = 1;  
-    int pwm_max = 23; 
 
-    if (!strcmp(s, "open")){
-        softPwmWrite(SERVO_PIN, pwm_min);
+    if (!strcmp(s, "OPEN")){
+        softPwmWrite(SERVO_PIN, PWM_MIN);
     }
-	else if (!strcmp(s, "half")){
-		softPwmWrite(SERVO_PIN, pwm_max / 2);
+	else if (!strcmp(s, "HALF")){
+		softPwmWrite(SERVO_PIN, (PWM_MAX + PWM_MIN) / 2);
 	}
-    else if (!strcmp(s, "close")){
-        softPwmWrite(SERVO_PIN, pwm_max);
+    else if (!strcmp(s, "CLOSE")){
+        softPwmWrite(SERVO_PIN, PWM_MAX);
     }
-    else if (strcmp(s, "left") == 0){
-        if (currPwm > pwm_min){
-            currPwm--;
-            pwmWrite(SERVO_PIN,currPwm);
-            delay(100);
-        }
+    else{
+        moveServoSmoothly(atoi(s));
     }
-    else if (strcmp(s, "right") == 0){
-        if (currPwm > pwm_min){
-            currPwm++;
-            pwmWrite(SERVO_PIN, currPwm);
-            delay(100);
-        }
-    }
+
     // STOP SERVO
 	sleep(2);
     softPwmStop(SERVO_PIN);
     return 0;
 }
 
-int handleCommands(int client_socket){
+int receiveMsg(int client_socket){
    
    //RESEIVE MSG
-	char *errmsg = "Not valid command ape!\n";
-	char *successmsg = "Success !\n";
     char buffer[1024];
     int bytes_received = recv(client_socket, buffer, sizeof(buffer), 0);
-    if (bytes_received <= 0) {
-        return -1;
-    }
+    if (bytes_received <= 0) {return -1;}
     buffer[bytes_received] = '\0';
 
-    //CHECK MSG
-    if(strcmp(buffer, "open") == 0){
-        servoMove("open");
-		send(client_socket, successmsg, strlen(successmsg), 0);
+    // CHECK COMMAND
+    char *header = strtok(buffer, ":");
+    if (header != NULL) {
+        char *command = strtok(NULL, ":");
+        printf("command %s\n", command);
+        
+        if(command != NULL){
+            
+            if (strcmp(header, "MOVE") == 0){
+                servoMove(command);
+            }
+            else if (strcmp(header, "SAVE")){
+                saveUserSettings(command);
+            }
+        }
     }
-    else if (strcmp(buffer, "close") == 0){
-        servoMove("close");
-		send(client_socket, successmsg, strlen(successmsg), 0);
-    }
-	else if (strcmp(buffer, "half") == 0){
-		servoMove("half");
-		send(client_socket, successmsg, strlen(successmsg), 0);
-	}
-    else if (strcmp(buffer, "spinleft") == 0){    
-        if (servoMove("left")){send(client_socket, strerror(errno), strlen(strerror(errno)), 0); return -1;}    
-        printf("Spinning left\n");
-        send(client_socket, successmsg, strlen(successmsg), 0);
-    }
-    else if (strcmp(buffer, "spinright") == 0){    
-        if (servoMove("right")){send(client_socket, strerror(errno), strlen(strerror(errno)), 0); return -1;}    
-		printf("Spinning right\n");
-        send(client_socket, successmsg, strlen(successmsg), 0);
-    }
-	else send(client_socket, errmsg, strlen(errmsg), 0);
+	else send(client_socket, "NOT VALID !", 11, 0);
 
     return 0;
 }
@@ -113,10 +123,11 @@ int main(void) {
     socklen_t client_addr_len = sizeof(client_addr);
     int client_socket = accept(server_socket, (struct sockaddr *)&client_addr, &client_addr_len);
 	if (client_socket != -1){printf("Connected !\n");}
+
     // COMMUNICATE
     while (1) {
         
-		if(handleCommands(client_socket) == -1)return 1;
+		if(receiveMsg(client_socket) == -1)return 1;
  
     }
 

@@ -1,2 +1,4 @@
+SRCS= $(wildcard srcs/gtk/*.c srcs/*.c)
+
 all:
-	gcc main.c -o exe `pkg-config --cflags --libs bluez gtk4 gtk+-3.0` -lbluetooth
+	gcc -o exe $(SRCS) `pkg-config --cflags --libs gtk4` -lbluetooth

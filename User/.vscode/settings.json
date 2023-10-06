@@ -4,6 +4,7 @@
         "socket.h": "c",
         "gtk_functions.h": "c",
         "rfcomm.h": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "bt_functions.h": "c"
     }
 }

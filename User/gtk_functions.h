@@ -10,4 +10,7 @@ static void saveButtonClicked(GtkButton *button, gpointer user_data);
 void saveWindow();
 void activate(GtkApplication *app, gpointer user_data);
 
+//SAVEUSER
+int saveUser(const char *username);
+
 #endif

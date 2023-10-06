@@ -16,3 +16,30 @@ button:hover{
 entry {
     color: #ffffff; /* You can use any valid color value here */
 }
+
+/* Add this CSS code to your style.css file */
+.invalid-entry {
+    border: 2px solid rgb(255, 0, 0);
+    animation: shake 0.5s; /* Decreased duration to 0.5 seconds */
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-5px); } /* Adjusted percentages for a faster shake */
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+    100% { transform: translateX(0); } /* Back to the original position */
+}
+
+.header-main {
+
+    color:rgb(0, 119, 231);
+    font-family: "Arial", sans-serif; 
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.entry-msg {
+    color: white;
+}

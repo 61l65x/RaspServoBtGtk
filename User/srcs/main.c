@@ -30,6 +30,5 @@ int main(int argc, char **argv) {
     //CLEANUP
     g_object_unref(app);
     close(client_socket);
-
     return 0;
 }

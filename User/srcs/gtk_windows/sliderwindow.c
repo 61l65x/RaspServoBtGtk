@@ -4,7 +4,7 @@
 void sliderValueChanged(GtkRange *range, gpointer user_data) {
     double value = gtk_range_get_value(range);
     char command[32];
-    snprintf(command, sizeof(command), "MOVE:%.1f", value);
+    snprintf(command, sizeof(command), "%.1f", value);
     sendCommand(command);
 }
 
@@ -26,8 +26,8 @@ void sliderWindow() {
     GtkWidget *label = gtk_label_new(NULL);
     gtk_label_set_markup(GTK_LABEL(label), markup_text);
     //slider 
-    GtkWidget *slider = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0.0, 23.0, 1.0);
-    gtk_range_set_value(GTK_RANGE(slider), 0.0);
+    GtkWidget *slider = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1.0, 180.0, 1.0);
+    gtk_range_set_value(GTK_RANGE(slider), 1.0);
     gtk_widget_set_size_request(slider, 300, -1);
     //attach
     gtk_grid_attach(GTK_GRID(grid), label, 1, 1, 1, 1);

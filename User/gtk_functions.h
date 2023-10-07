@@ -3,14 +3,20 @@
 
 #include <gtk/gtk.h>
 
-// GTK
-void sliderValueChanged(GtkRange *range, gpointer user_data);
-void sliderWindow();
-static void saveButtonClicked(GtkButton *button, gpointer user_data);
-void saveWindow();
+/******** GTK **********/
+//MAINW
 void activate(GtkApplication *app, gpointer user_data);
 
-//SAVEUSER
-int saveUser(const char *username);
+//FASTW
+void fastWindow(void);
+
+//SAVEW
+void saveWindow();
+int saveUser(const char *username); //json handle
+//SLIDEW
+void sliderValueChanged(GtkRange *range, gpointer user_data);
+void sliderWindow();
+
+
 
 #endif

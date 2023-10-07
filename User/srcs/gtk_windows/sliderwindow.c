@@ -22,21 +22,29 @@ void sliderWindow() {
     gtk_widget_set_valign(grid, GTK_ALIGN_CENTER);
 
     //label
-    const gchar *markup_text = "<span foreground='white'> <b>| Adjust the slide to move servo |</b>.</span>";
-    GtkWidget *label = gtk_label_new(NULL);
-    gtk_label_set_markup(GTK_LABEL(label), markup_text);
+    const gchar *markup_text1 = "<span foreground='white'> <b>| Left Servo |</b>.</span>";
+    GtkWidget *labelLeft = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(labelLeft), markup_text1);
+    const gchar *markup_text2 = "<span foreground='white'> <b>| Right Servo |</b>.</span>";
+    GtkWidget *labelRight = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(labelRight), markup_text2);
     //slider 
-    GtkWidget *slider = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1.0, 180.0, 1.0);
-    gtk_range_set_value(GTK_RANGE(slider), 1.0);
-    gtk_widget_set_size_request(slider, 300, -1);
+    GtkWidget *sliderRight = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1.0, 180.0, 1.0);
+    GtkWidget *sliderLeft = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1.0, 180.0, 1.0);
+    gtk_range_set_value(GTK_RANGE(sliderRight), 1.0);
+    gtk_widget_set_size_request(sliderRight, 300, -1);
+    gtk_range_set_value(GTK_RANGE(sliderLeft), 1.0);
+    gtk_widget_set_size_request(sliderLeft, 300, -1);
     //attach
-    gtk_grid_attach(GTK_GRID(grid), label, 1, 1, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), slider, 1, 5, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), labelLeft,    1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), labelRight,   2, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), sliderRight,  1, 5, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), sliderLeft,   2, 5, 1, 1);
     /***************** GRID END   ********/
 
     //functionality
-    g_signal_connect(slider, "value-changed", G_CALLBACK(sliderValueChanged), NULL);
-    
+    g_signal_connect(sliderRight, "value-changed", G_CALLBACK(sliderValueChanged), NULL);
+    g_signal_connect(sliderLeft, "value-changed", G_CALLBACK(sliderValueChanged), NULL);
     gtk_window_set_child(GTK_WINDOW(manualWindow), grid);
     gtk_widget_show(manualWindow);
 }

@@ -4,7 +4,7 @@
 
 //ERROR MSG FOR USER EXISTS
 static GtkWidget *messageLabel = NULL;
-
+enum SaveUserResult {ERROR = -1,SUCCESS = 0,EXISTS = 3};
 
 static int validateInput(const gchar *text){
     
@@ -12,31 +12,38 @@ static int validateInput(const gchar *text){
     return 1;
 }
 
-static void saveButtonClicked(GtkButton *button, gpointer user_data) {
+static void saveButtonClicked(GtkButton *button, gpointer user_data) 
+{
     GtkEntryBuffer *nameEntry = GTK_ENTRY_BUFFER(user_data);
     const gchar *name = gtk_entry_buffer_get_text(nameEntry);
 
     //SAVE DATA TO JSON
-    int reVal = saveUser(name);
-    if (reVal == -1){perror("ERROR:JSON");exit(EXIT_FAILURE);}//ERROR
-    
-    if (reVal == 0){ //SUCCESS
-        gtk_label_set_text(GTK_LABEL(messageLabel), "Success");  
+    switch (saveUser(name)) {
+        case ERROR:
+            perror("ERROR:JSON");
+            exit(EXIT_FAILURE);
+            break;
+        
+        case SUCCESS:
+            gtk_label_set_text(GTK_LABEL(messageLabel), "Success");
+            break;
+
+        case EXISTS:
+            if (messageLabel != NULL) {
+                gtk_label_set_text(GTK_LABEL(messageLabel), "User already exists.");
+            }
+            break;
+
+        default:
+            break;
     }
-    else if (reVal == 3){ //USR EXISTS
-        if (messageLabel != NULL) {
-            gtk_label_set_text(GTK_LABEL(messageLabel), "User already exists.");
-        }   
-     }
 }
 
 static void entryChanged(GtkEditable *editable, gpointer user_data) {
     GtkEntryBuffer *entry = GTK_ENTRY_BUFFER(user_data);
     const gchar *text = gtk_entry_buffer_get_text(entry);
 
-    gboolean isValid = validateInput(text);
-
-    if (!isValid) {gtk_widget_add_css_class(GTK_WIDGET(editable), "invalid-entry");}
+    if (!validateInput(text)) {gtk_widget_add_css_class(GTK_WIDGET(editable), "invalid-entry");}
     else {gtk_widget_remove_css_class(GTK_WIDGET(editable), "invalid-entry");}
 }
 

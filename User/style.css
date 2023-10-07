@@ -1,28 +1,42 @@
+/* MAIN WINDOW */
 window {
     background-color: #300A24;
-    /* You can add more style properties here */
+    
 }
-
 button {
         font-size: 17px;    
         color: #FFFFFF;      
         background-color: #300A24;
+        border: 1px solid #ffffff79;      
 } 
-
-button:hover{
+button:hover { 
     background-color: #ffffff79;
 }
+.header-main {
 
-entry {
-    color: #ffffff; /* You can use any valid color value here */
+    color:rgb(255, 255, 255);
+    font-family: "Dela Gothic One"; 
+    font-weight: bold;
+    font-size: 21px;
+
+    /*Borders*/
+    border-top: 2px solid #ffffff79;
+    border-bottom: 2px solid #ffffff79; /* Add a border-bottom to simulate an underline */
+    text-decoration: none; 
+ 
 }
 
-/* Add this CSS code to your style.css file */
+/* SAVE WINDOW */
+entry {
+    color: #ffffff; 
+}
+.entry-msg {
+    color: white;
+}
 .invalid-entry {
     border: 2px solid rgb(255, 0, 0);
     animation: shake 0.5s; /* Decreased duration to 0.5 seconds */
 }
-
 @keyframes shake {
     0% { transform: translateX(0); }
     20% { transform: translateX(-5px); } /* Adjusted percentages for a faster shake */
@@ -30,16 +44,4 @@ entry {
     60% { transform: translateX(-5px); }
     80% { transform: translateX(5px); }
     100% { transform: translateX(0); } /* Back to the original position */
-}
-
-.header-main {
-
-    color:rgb(0, 119, 231);
-    font-family: "Arial", sans-serif; 
-    font-weight: bold;
-    font-size: 20px;
-}
-
-.entry-msg {
-    color: white;
 }

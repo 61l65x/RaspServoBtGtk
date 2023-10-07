@@ -66,7 +66,6 @@ int saveUser(const char *username) {
             free(user);
             return 3; //ERROR CODE FOR EXISTING NAME
         }
-        return 0;
     }
 
     // JSON OBJ FOR USR

@@ -11,9 +11,11 @@
 #include <pthread.h>
 
 #define SERVO_PIN 18
-#define MIN_PULSE_WIDTH 50  // Minimum pulse width for your servo
-#define MAX_PULSE_WIDTH 250 // Maximum pulse width for your servo
+#define MIN_PULSE_WIDTH 65  // Minimum pulse width for your servo
+#define MAX_PULSE_WIDTH 244 // Maximum pulse width for your servo
 #define SERVO_RANGE 180 // Servo's range in degrees
+
+int angle;
 
 int server_socket, client_socket;
 
@@ -31,29 +33,31 @@ void setupWiring() {
 
 int controlServo() 
 {
-    char *successmsg = "Success !\n";
     char buffer[1024];
     int bytes_received = recv(client_socket, buffer, sizeof(buffer), 0);
-    if (bytes_received <= 0) {
-        return -1;
-    }
+    if (bytes_received <= 0)return -1;
+    buffer[bytes_received] = '\0';
 
-    int angle = atoi(buffer);
+
+    printf("%s\n", buffer);
+
+    if (strcmp(buffer, "OPEN") == 0){pwmWrite(SERVO_PIN, MAX_PULSE_WIDTH); delay(1500);}
+    else if (strcmp(buffer, "HALF") == 0) pwmWrite(SERVO_PIN, (MAX_PULSE_WIDTH + MIN_PULSE_WIDTH) / 2);
+    else if (strcmp(buffer, "CLOSE") == 0){pwmWrite(SERVO_PIN, MIN_PULSE_WIDTH); delay(1500);}
+    
+    angle = atoi(buffer);
     printf("Received angle: %d\n", angle);
 
-    if (angle < 0) {
-        angle = 0;
-    } else if (angle > SERVO_RANGE) {
-        angle = SERVO_RANGE;
-    }
+    if (angle < 0) angle = 0;
+    else if (angle > SERVO_RANGE)angle = SERVO_RANGE;
+    
 
     // Map the angle to the pulse width range
     int pulseWidth = map(angle, 0, SERVO_RANGE, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
-	
-	//	pulseWidth + 100;
-
+    printf("Received angle: %d\n", pulseWidth);
     // Send the pulse width to the servo
-    pwmWrite(SERVO_PIN, pulseWidth);
+    if (angle)pwmWrite(SERVO_PIN, pulseWidth);
+
 }
 
 int main(void) {

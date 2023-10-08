@@ -13,6 +13,10 @@ void fastWindow(void);
 //SAVEW
 void saveWindow();
 int saveUser(const char *username, int settings); //json handle
+//LOADW
+void loadWindow();
+
+
 //SLIDEW
 void sliderValueChanged(GtkRange *range, gpointer user_data);
 void sliderWindow();

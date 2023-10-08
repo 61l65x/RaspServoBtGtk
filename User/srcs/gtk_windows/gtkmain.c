@@ -8,6 +8,7 @@ GtkCssProvider *cssProvider;
 static void fastCommand(GtkWidget *widget, gpointer user_data) { fastWindow(); }
 static void manualCommand(GtkWidget *widget, gpointer user_data) { sliderWindow(); }
 static void saveCommand(GtkWidget *widget, gpointer user_data) { saveWindow(); }
+static void loadCommand(GtkWidget *widget, gpointer user_data) { loadWindow(); }
 static void exitCommand(GtkWidget *widget, gpointer user_data) { exit(EXIT_SUCCESS); }
 
 // MAINWINDOW*********************************
@@ -53,21 +54,25 @@ void activate(GtkApplication *app, gpointer user_data)
     GtkWidget *fast = gtk_button_new_with_label("Fast Controls");
     GtkWidget *manual = gtk_button_new_with_label("Manual Control");
     GtkWidget *save = gtk_button_new_with_label("Save settings");
+    GtkWidget *load = gtk_button_new_with_label("Load settings");
     GtkWidget *exit = gtk_button_new_with_label("Exit");
     //size
     gtk_widget_set_size_request(fast,   120, 50);
     gtk_widget_set_size_request(manual, 120, 50);
     gtk_widget_set_size_request(save,   120, 50);
+    gtk_widget_set_size_request(load,   120, 50);
     gtk_widget_set_size_request(exit,   120, 50);
     //grid attach
     gtk_grid_attach(GTK_GRID(grid), fast,   1, 1, 1, 1);
     gtk_grid_attach(GTK_GRID(grid), manual, 1, 2, 1, 1);
     gtk_grid_attach(GTK_GRID(grid), save,   1, 3, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), exit,   1, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), load,   1, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), exit,   1, 5, 1, 1);
     // connect signal handlers
     g_signal_connect(fast,   "clicked", G_CALLBACK(fastCommand),   NULL);
     g_signal_connect(manual, "clicked", G_CALLBACK(manualCommand), NULL);
     g_signal_connect(save,   "clicked", G_CALLBACK(saveCommand),   NULL);
+    g_signal_connect(load,   "clicked", G_CALLBACK(loadCommand),   NULL);
     g_signal_connect(exit,   "clicked", G_CALLBACK(exitCommand),   NULL);
     //BUTTON END -------------------------------------------
 

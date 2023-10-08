@@ -1,7 +1,10 @@
 #TODOLIST FOR THE APP UPDATE !!!!
 
-+ Add the load user window lists users and when loaded will move the
-	servo to correct position.
++ Added load user window add the load functionality for loading the user
+ and show the users below window !
+
+
+
 
 + Do 2 servos RIGHT AND LEFT. headers and then commands for movement
 

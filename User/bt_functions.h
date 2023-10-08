@@ -8,6 +8,9 @@
 #include <bluetooth/rfcomm.h>
 #include <unistd.h>
 
+//Bluetooth fd
+extern int client_socket;
+
 // Function declarations
 void sendCommand(const char *command);
 

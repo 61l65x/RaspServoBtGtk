@@ -1,7 +1,8 @@
 #include "../bt_functions.h"
 #include "../gtk_functions.h"
 
-static int client_socket;
+int client_socket;
+
 void sendCommand(const char *command) {
     if (send(client_socket, command, strlen(command), 0) == -1) {
         perror("Failed to send command");
@@ -11,7 +12,8 @@ void sendCommand(const char *command) {
 int main(int argc, char **argv) {
 
     // Create a Bluetooth RFCOMM socket
-    client_socket = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
+    if((client_socket = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM)) < 0){
+        perror("Error: "); return 1;}
 
     // Connect to the server on the address "C8:7F:54:98:B6:09" on channel 4
     struct sockaddr_rc server_addr;
@@ -19,6 +21,7 @@ int main(int argc, char **argv) {
     str2ba("B8:27:EB:BB:5A:DA", &server_addr.rc_bdaddr);
     server_addr.rc_channel = 4;
     connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
+
 
     //GTK APP
 	gtk_init();

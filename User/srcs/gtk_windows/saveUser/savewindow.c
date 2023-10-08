@@ -7,18 +7,36 @@ static GtkWidget *messageLabel = NULL;
 enum SaveUserResult {ERROR = -1,SUCCESS = 0,EXISTS = 3};
 
 static int validateInput(const gchar *text){
-    
     if (strlen(text) < 3)return 0;
     return 1;
+}
+
+//JATKA TAALTA
+static int requestSettings(void)
+{
+    char    buffer[1024];
+    int     bytes_received = 0;
+    int     settings = 0;
+    char    *msg = "SETTINGS";
+    if (send(client_socket, msg, strlen(msg), 0) == -1) return -1;
+    if ((bytes_received = recv(client_socket, buffer, sizeof(buffer), 0)) == -1)return -1;
+    buffer[bytes_received] = '\0';
+    settings = atoi(buffer);
+
+    return (settings);
 }
 
 static void saveButtonClicked(GtkButton *button, gpointer user_data) 
 {
     GtkEntryBuffer *nameEntry = GTK_ENTRY_BUFFER(user_data);
     const gchar *name = gtk_entry_buffer_get_text(nameEntry);
+    int settings = requestSettings();
+    if (settings == -1){perror("ERROR:REQUEST "); exit(EXIT_FAILURE);}
 
+    printf("TAALLA : %d\n", settings);
+    
     //SAVE DATA TO JSON
-    switch (saveUser(name)) {
+    switch (saveUser(name, settings)) {
         case ERROR:
             perror("ERROR:JSON");
             exit(EXIT_FAILURE);

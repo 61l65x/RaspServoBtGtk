@@ -7,18 +7,21 @@
 #include <cjson/cJSON.h>
 
 
-typedef struct {
-    char name[128];
+typedef struct UserSettings
+{
+    char   name[128];
+    int    settings;
 } UserSettings;
 
 
 
 //SAVE USER TO JSON
-int saveUser(const char *username) {
+int saveUser(const char *username, int settings) {
     //User struct
     UserSettings *user = (UserSettings *)malloc(sizeof(UserSettings));
     if (user == NULL) return -1;
     strcpy(user->name, username);
+    user->settings = settings;
 
     // READ EXISTING FILE
     const char *filePath = "user.json";
@@ -45,12 +48,12 @@ int saveUser(const char *username) {
         root = cJSON_Parse(fileContent);
         free(fileContent);
     }
-    //IF DOESNT EXIST OR IS EMPTY NEW
+    //NEW JSON OBJ IF EMPTY 
     if (root == NULL) {root = cJSON_CreateArray();}
 
     // IF NOT EMPTY CHECK 
     else {
-        // Check if the name is already in the JSON array
+        // CHECK IF NAME EXISTS
         int nameExists = 0;
         cJSON *userItem;
         cJSON_ArrayForEach(userItem, root) {
@@ -71,6 +74,7 @@ int saveUser(const char *username) {
     // JSON OBJ FOR USR
     cJSON *userObject = cJSON_CreateObject();
     cJSON_AddStringToObject(userObject, "username", user->name);
+    cJSON_AddNumberToObject(userObject, "settings", user->settings);
     cJSON_AddItemToArray(root, userObject);
 
     //JSON ARR TO STR

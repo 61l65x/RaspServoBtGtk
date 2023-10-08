@@ -15,8 +15,8 @@ button:hover {
 .header-main {
 
     color:rgb(255, 255, 255);
-    font-family: "Dela Gothic One"; 
-    font-weight: bold;
+    font-family: "Oswald"; 
+    font-weight:500;
     font-size: 21px;
 
     /*Borders*/
@@ -24,6 +24,16 @@ button:hover {
     border-bottom: 2px solid #ffffff79; /* Add a border-bottom to simulate an underline */
     text-decoration: none; 
  
+}
+/* SLIDER WINDOW */
+.slide-label {
+
+    color: white;
+    font-size: 17px;
+    text-decoration: none;
+}
+.slide-slider {
+    color: rgb(255, 255, 255);
 }
 
 /* SAVE WINDOW */

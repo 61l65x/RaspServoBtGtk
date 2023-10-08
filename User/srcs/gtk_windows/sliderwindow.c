@@ -22,15 +22,16 @@ void sliderWindow() {
     gtk_widget_set_valign(grid, GTK_ALIGN_CENTER);
 
     //label
-    const gchar *markup_text1 = "<span foreground='white'> <b>| Left Servo |</b>.</span>";
-    GtkWidget *labelLeft = gtk_label_new(NULL);
-    gtk_label_set_markup(GTK_LABEL(labelLeft), markup_text1);
-    const gchar *markup_text2 = "<span foreground='white'> <b>| Right Servo |</b>.</span>";
-    GtkWidget *labelRight = gtk_label_new(NULL);
-    gtk_label_set_markup(GTK_LABEL(labelRight), markup_text2);
+    GtkWidget *labelLeft = gtk_label_new("Left Servo");
+    gtk_widget_add_css_class(GTK_WIDGET(labelLeft), "slide-label");
+    GtkWidget *labelRight = gtk_label_new("Right Servo");
+    gtk_widget_add_css_class(GTK_WIDGET(labelRight), "slide-label");
+
     //slider 
     GtkWidget *sliderRight = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1.0, 180.0, 1.0);
     GtkWidget *sliderLeft = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 1.0, 180.0, 1.0);
+    gtk_widget_add_css_class(GTK_WIDGET(sliderLeft), "slide-slider");
+    gtk_widget_add_css_class(GTK_WIDGET(sliderRight), "slide-slider");
     gtk_range_set_value(GTK_RANGE(sliderRight), 1.0);
     gtk_widget_set_size_request(sliderRight, 300, -1);
     gtk_range_set_value(GTK_RANGE(sliderLeft), 1.0);

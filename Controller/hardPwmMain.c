@@ -19,16 +19,28 @@ int angle;
 
 int server_socket, client_socket;
 
-int map(int x, int in_min, int in_max, int out_min, int out_max){
+static int map(int x, int in_min, int in_max, int out_min, int out_max){
 	return ((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
 }
 
-void setupWiring() {
+static void setupWiring() {
     wiringPiSetupGpio(); // Initialize WiringPi
     pinMode(SERVO_PIN, PWM_OUTPUT); // Set the servo pin as PWM output
     pwmSetMode(PWM_MODE_MS); // Set PWM mode to mark-space
     pwmSetClock(192); // Set PWM frequency (approximately 50Hz, standard for servos)
     pwmSetRange(2000); // Set PWM range (typically 1000μs to 2000μs)
+}
+
+//JATKA TAALTA 
+void sendSettings(void)
+{
+    char settings[100];
+    sprintf(settings, "%d", angle);
+    if(send(client_socket, settings, strlen(settings), 0) == -1){
+        perror("ERROR:"); exit(EXIT_FAILURE);
+    };
+
+    printf("sent settings %s\n", settings);
 }
 
 int controlServo() 
@@ -41,23 +53,24 @@ int controlServo()
 
     printf("%s\n", buffer);
 
-    if (strcmp(buffer, "OPEN") == 0){pwmWrite(SERVO_PIN, MAX_PULSE_WIDTH); delay(1500);}
+    if (strcmp(buffer, "SETTINGS") == 0){sendSettings();}
+    else if (strcmp(buffer, "OPEN") == 0){pwmWrite(SERVO_PIN, MAX_PULSE_WIDTH); delay(1500);}
     else if (strcmp(buffer, "HALF") == 0) pwmWrite(SERVO_PIN, (MAX_PULSE_WIDTH + MIN_PULSE_WIDTH) / 2);
     else if (strcmp(buffer, "CLOSE") == 0){pwmWrite(SERVO_PIN, MIN_PULSE_WIDTH); delay(1500);}
-    
-    angle = atoi(buffer);
-    printf("Received angle: %d\n", angle);
-
-    if (angle < 0) angle = 0;
-    else if (angle > SERVO_RANGE)angle = SERVO_RANGE;
-    
-
-    // Map the angle to the pulse width range
-    int pulseWidth = map(angle, 0, SERVO_RANGE, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
-    printf("Received angle: %d\n", pulseWidth);
-    // Send the pulse width to the servo
-    if (angle)pwmWrite(SERVO_PIN, pulseWidth);
-
+    else { // MANUAL
+        angle = atoi(buffer);
+        printf("Received angle: %d\n", angle);
+        
+        //Check min max
+        if (angle < 0) angle = 0;
+        else if (angle > SERVO_RANGE)angle = SERVO_RANGE;
+        
+        // Map the angle to the pulse width range
+        int pulseWidth = map(angle, 0, SERVO_RANGE, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
+        printf("Received pwmwidth: %d\n", pulseWidth);
+        // Send the pulse width to the servo
+        pwmWrite(SERVO_PIN, pulseWidth);
+    }
 }
 
 int main(void) {

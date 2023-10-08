@@ -1,5 +1,5 @@
-#include "../../gtk_functions.h"
-#include "../../bt_functions.h"
+#include "gtk_functions.h"
+#include "bt_functions.h"
 
 void sliderValueChanged(GtkRange *range, gpointer user_data) {
     double value = gtk_range_get_value(range);

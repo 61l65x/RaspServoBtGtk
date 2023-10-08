@@ -1,5 +1,5 @@
-#include "../../gtk_functions.h"
-#include "../../bt_functions.h"
+#include "gtk_functions.h"
+#include "bt_functions.h"
 
 // CSS
 GtkCssProvider *cssProvider;

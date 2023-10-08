@@ -1,6 +1,6 @@
 
-#include "../../../gtk_functions.h"
-#include "../../../bt_functions.h"
+#include "gtk_functions.h"
+#include "bt_functions.h"
 #include <stdio.h>
 #include <stdlib.h> // Added for memory allocation
 #include <string.h>

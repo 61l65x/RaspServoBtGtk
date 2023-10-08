@@ -1,5 +1,5 @@
-#include "../bt_functions.h"
-#include "../gtk_functions.h"
+#include "bt_functions.h"
+#include "gtk_functions.h"
 
 int client_socket;
 

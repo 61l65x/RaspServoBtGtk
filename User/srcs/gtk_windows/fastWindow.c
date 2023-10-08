@@ -1,5 +1,5 @@
-#include "../bt_functions.h"
-#include "../gtk_functions.h"
+#include "bt_functions.h"
+#include "gtk_functions.h"
 
 static void openCommand(GtkWidget      *widget, gpointer user_data) {sendCommand("OPEN");}
 static void halfCommand(GtkWidget      *widget, gpointer user_data) {sendCommand("HALF");}

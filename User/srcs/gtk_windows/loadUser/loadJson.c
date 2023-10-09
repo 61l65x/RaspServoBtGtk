@@ -1,10 +1,7 @@
 
 #include "gtk_functions.h"
 #include "bt_functions.h"
-#include <stdio.h>
-#include <stdlib.h> // Added for memory allocation
-#include <string.h>
-#include <cjson/cJSON.h>
+#include "json_functions.h"
 
 //LOADS THE JSON 
 cJSON *loadUser() {
@@ -33,3 +30,32 @@ cJSON *loadUser() {
 
     return root;
 }
+
+// GETS THE USERDATA
+struct userData *getUserData(void)
+{
+    cJSON *root = loadUser();
+    if (root == NULL)return NULL;
+
+    if (root != NULL && cJSON_IsArray(root)) {
+        int arraySize = cJSON_GetArraySize(root);
+
+        for (int i = 0; i < arraySize; i++) {
+            cJSON *userObject = cJSON_GetArrayItem(root, i);
+            if (cJSON_IsObject(userObject)) {
+                cJSON *usernameItem = cJSON_GetObjectItemCaseSensitive(userObject, "username");
+                cJSON *settingsItem = cJSON_GetObjectItemCaseSensitive(userObject, "settings");
+
+                if (cJSON_IsString(usernameItem) && cJSON_IsNumber(settingsItem)) {
+                    const char *username = usernameItem->valuestring;
+                    int settings = settingsItem->valueint;
+
+                    // Now, you can work with 'username' and 'settings' here
+                    printf("Username: %s, Settings: %d\n", username, settings);
+                }
+            }
+        }
+    }
+
+}
+

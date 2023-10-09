@@ -1,6 +1,5 @@
 #include "gtk_functions.h"
 #include "bt_functions.h"
-#include <gtk/gtk.h>
 
 //ERROR MSG FOR USER EXISTS
 static GtkWidget *messageLabel = NULL;
@@ -31,7 +30,7 @@ static void saveButtonClicked(GtkButton *button, gpointer user_data)
     GtkEntryBuffer *nameEntry = GTK_ENTRY_BUFFER(user_data);
     const gchar *name = gtk_entry_buffer_get_text(nameEntry);
     int settings = requestSettings();
-    if (settings == -1){perror("ERROR:REQUEST "); exit(EXIT_FAILURE);}
+    if (settings == -1){perror("Error: Connect Bluetooth\n"); exit(EXIT_FAILURE);}
 
     printf("TAALLA : %d\n", settings);
     

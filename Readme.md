@@ -4,6 +4,8 @@
 
 This project establishes a Bluetooth RFCOMM connection between a controller and a user interface, enabling the control of servo motors. Servos can be used to control various devices, from car mirrors to robotic arms.
 
++ Raspberry 3b used as controller in this project could be any rasp.
+
 ## Features
 
 - Bluetooth Classic / RFCOMM communication.

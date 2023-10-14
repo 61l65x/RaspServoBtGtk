@@ -1,10 +1,33 @@
 # Servo Controller via Bluetooth RFCOMM
-
-![Project Image](your_project_image.png)
-
 This project establishes a Bluetooth RFCOMM connection between a controller and a user interface, enabling the control of servo motors. Servos can be used to control various devices, from car mirrors to robotic arms.
+<table>
+  <tr>
+    <td align="right">
+      <img src="RaspServo.jpg" width="200" alt="Project Image">
+    </td>
+    <td>
+      <p style="margin-top: 0; font-weight: bold; font-size: 18px;">Server Side Servo and Rasp</p>
+      <p>Uses the Rasp as the server. Any microcontroller can be used with pins.
+      </p>
+      You can do this with Software generated pwm signals to you dont need a pwm pin. But the signal from pwm pin is more precise.</p>You can use wifi or bluetooth for remote controlling.</p>
+    </td>
+  </tr>
+</table>
 
-+ Raspberry 3b used as controller in this project could be any rasp.
+
+![Project Image](Gtkwindows.png)
+
+## GTK GUI - gtk4
+
+- **SERVO APP** Main menu window.
+
+- **Fast Controls** Quickly move the servo to 0, 90, or 180 degrees.
+
+- **Slider Control** Smooth and precise servo movement.
+
+- **Save User** Requests the current position from the server, saves it, and stores the user's name in a JSON file on the user's side.
+
+- **Load User** Load user settings and position. It moves the servo to the position saved with "Save User."
 
 ## Features
 

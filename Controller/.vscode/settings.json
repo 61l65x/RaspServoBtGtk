@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "bluetooth.h": "c",
-        "unistd.h": "c",
-        "pthread.h": "c"
-    }
-}

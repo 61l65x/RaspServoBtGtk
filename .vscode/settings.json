@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "stdlib.h": "c",
-        "wiringpi.h": "c",
-        "gtk.h": "c"
-    }
-}

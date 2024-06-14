@@ -3,7 +3,7 @@ This project establishes a Bluetooth RFCOMM connection between a controller and 
 <table>
   <tr>
     <td align="right">
-      <img src="RaspServo.jpg" width="200" alt="Project Image">
+      <img src="assets/RaspServo.jpg" width="200" alt="Project Image">
     </td>
     <td>
       <p style="margin-top: 0; font-weight: bold; font-size: 18px;">Server Side Servo and Rasp</p>
@@ -15,7 +15,7 @@ This project establishes a Bluetooth RFCOMM connection between a controller and 
 </table>
 
 
-![Project Image](Gtkwindows.png)
+![Project Image](assets/Gtkwindows.png)
 
 ## GTK GUI - gtk4
 
